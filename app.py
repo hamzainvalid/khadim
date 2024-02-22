@@ -188,7 +188,7 @@ class InvoiceApp:
         filename = f"Invoice_{invoice_no}.pdf"
         c = canvas.Canvas(filename, pagesize=letter)
          # Add logo image
-        logo_path = "Logo.png"
+        logo_path = "D:\Repositories\khadim\Logo.png"
         c.drawImage(logo_path, 240, 750, width=120, height=60)
         c.drawString(100, 750, "Invoice")
         c.drawString(100, 730, f"Date: {date}")
