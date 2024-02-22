@@ -105,8 +105,8 @@ class InvoiceApp:
         # Date
         self.date_label = ttk.Label(self.frame1, text="Date:")
         self.date_label.grid(row=0, column=0, sticky="w")
-        cal=DateEntry(self.frame1,selectmode='day')
-        cal.grid(row=0,column=1)
+        self.date_entry=DateEntry(self.frame1,selectmode='day')
+        self.date_entry.grid(row=0,column=1)
 
         # Invoice Number
         self.invoice_label = ttk.Label(self.frame1, text="Invoice No:")
@@ -187,6 +187,9 @@ class InvoiceApp:
         # Generate PDF
         filename = f"Invoice_{invoice_no}.pdf"
         c = canvas.Canvas(filename, pagesize=letter)
+         # Add logo image
+        logo_path = "D:\Repositories\khadim\Logo.png"
+        c.drawImage(logo_path, 240, 750, width=120, height=60)
         c.drawString(100, 750, "Invoice")
         c.drawString(100, 730, f"Date: {date}")
         c.drawString(100, 710, f"Invoice No: {invoice_no}")
