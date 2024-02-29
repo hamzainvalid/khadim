@@ -536,6 +536,8 @@ class InvoiceApp:
         # Generate PDF
         filename = f"khadim\invoices-pdf\Invoice_{invoice_no}.pdf"
         c = canvas.Canvas(filename, pagesize=letter)
+        logo_path = "Logo.png"
+        c.drawImage(logo_path, 240, 750, width=120, height=60)
         c.drawString(100, 750, "Invoice")
         c.drawString(100, 730, f"Date: {date}")
         c.drawString(100, 710, f"Invoice No: {invoice_no}")
@@ -567,34 +569,47 @@ class InvoiceApp:
         except FileNotFoundError:
             self.invoices = []
 
-        # Create a treeview widget to display invoice information
-        tree = ttk.Treeview(top)
-        tree["columns"] = ("Date", "Invoice No", "Car Registration", "Car Model", "Total Amount", "Advanced Amount", "Amount Handed Over", "Type of Service", "Description", "Qty")
-        tree.heading("#0", text="Index")
-        tree.column("#0", width=50)
-        for col in tree["columns"]:
-            tree.heading(col, text=col)
-            tree.column(col, width=100)
-
-        # Insert invoice information into the treeview
-        for idx, invoice in enumerate(self.invoices):
-            tree.insert("", tk.END, text=str(idx+1), values=tuple(invoice.values()))
-
-        tree.pack(expand=True, fill="both")
-
-        def generate_pdf(invoice_data):
+        def generate_invoice_pdf(invoice_data):
             filename = f"khadim\invoices-pdf\Regenerated\Invoice_{invoice_data['Invoice No']}.pdf"
             c = canvas.Canvas(filename, pagesize=letter)
+            c = canvas.Canvas(filename, pagesize=letter)
+            logo_path = "Logo.png"
+            c.drawImage(logo_path, 240, 750, width=120, height=60)
             c.drawString(100, 750, "Invoice")
-            for idx, (key, value) in enumerate(invoice_data.items()):
-                c.drawString(100, 730 - idx * 20, f"{key}: {value}")
+            c.drawString(100, 730, f"Date: {invoice_data['Date']}")
+            c.drawString(100, 710, f"Invoice No: {invoice_data['Invoice No']}")
+            c.drawString(100, 690, f"Car Registration: {invoice_data['Car Registration']}")
+            c.drawString(100, 670, f"Car Model: {invoice_data['Car Model']}")
+            c.drawString(100, 650, f"Total Amount: {invoice_data['Total Amount']}")
+            c.drawString(100, 630, f"Advanced Amount: {invoice_data['Advanced Amount']}")
+            c.drawString(100, 610, f"Amount Handed Over: {invoice_data['Amount Handed Over']}")
+            c.drawString(100, 590, f"Type of Service: {invoice_data['Type of Service']}")
+            c.drawString(100, 570, f"Description: {invoice_data['Description']}")
+            c.drawString(100, 550, f"Qty: {invoice_data['Qty']}")
             c.save()
+
             messagebox.showinfo("Success", f"Invoice generated successfully: {filename}")
 
-        # Create buttons for each invoice
+        # Create a frame to display invoice information
+        frame = ttk.Frame(top)
+        frame.pack(padx=10, pady=10)
+
+        # Display invoice information and buttons
         for invoice_data in self.invoices:
-            btn = ttk.Button(top, text=f"Invoice {invoice_data['Invoice No']}", command=lambda data=invoice_data: generate_pdf(data))
-            btn.pack(padx=5, pady=5)
+            invoice_frame = ttk.Frame(frame, padding=(10, 5))
+            invoice_frame.pack(fill="x")
+
+            invoice_label = ttk.Label(invoice_frame, text=f"Invoice No: {invoice_data['Invoice No']}")
+            invoice_label.pack(side="left", padx=(0, 10))
+
+            generate_button = ttk.Button(invoice_frame, text="Generate PDF", command=lambda data=invoice_data: generate_invoice_pdf(data))
+            generate_button.pack(side="right")
+
+        # Add a scrollbar if there are many invoices
+        scrollbar = ttk.Scrollbar(frame, orient="vertical", command=top.yview)
+        scrollbar.pack(side="right", fill="y")
+
+        top.configure(yscrollcommand=scrollbar.set)
 
 def main():
     root = tk.Tk()
