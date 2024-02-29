@@ -413,6 +413,7 @@ from reportlab.lib.pagesizes import letter
 from reportlab.pdfgen import canvas
 from tkcalendar import DateEntry
 import json
+import shutil
 
 class InvoiceApp:
     def __init__(self, root):
@@ -533,10 +534,16 @@ class InvoiceApp:
             "Qty": qty
         })
 
+        # Ask user to select directory
+        directory = filedialog.askdirectory()
+        if not directory:
+            messagebox.showerror("Error", "No directory selected.")
+            return
+
         # Generate PDF
-        filename = f"khadim\invoices-pdf\Invoice_{invoice_no}.pdf"
+        filename = f"{directory}/Invoice_{invoice_no}.pdf"
         c = canvas.Canvas(filename, pagesize=letter)
-        logo_path = "Logo.png"
+        logo_path = "logo\Logo.png"
         c.drawImage(logo_path, 240, 750, width=120, height=60)
         c.drawString(100, 750, "Invoice")
         c.drawString(100, 730, f"Date: {date}")
@@ -554,7 +561,7 @@ class InvoiceApp:
 
         messagebox.showinfo("Success", f"Invoice generated successfully: {filename}")
         # Save invoices to a text file
-        with open("khadim\db\invoices.txt", "a") as file:
+        with open("db\invoices.txt", "a") as file:
             json.dump(self.invoices, file)
 
     def show_invoices(self):
@@ -564,16 +571,23 @@ class InvoiceApp:
 
         # Load invoices from the text file
         try:
-            with open("khadim\db\invoices.txt", "r") as file:
+            with open("\invoices.txt", "r") as file:
                 self.invoices = json.load(file)
         except FileNotFoundError:
             self.invoices = []
 
         def generate_invoice_pdf(invoice_data):
-            filename = f"khadim\invoices-pdf\Regenerated\Invoice_{invoice_data['Invoice No']}.pdf"
+            # Ask user to select directory
+            directory = filedialog.askdirectory()
+            if not directory:
+                messagebox.showerror("Error", "No directory selected.")
+                return
+
+            # Generate PDF
+            filename = f"{directory}/Invoice_{invoice_data['Invoice No']}.pdf"
             c = canvas.Canvas(filename, pagesize=letter)
             c = canvas.Canvas(filename, pagesize=letter)
-            logo_path = "Logo.png"
+            logo_path = "logo\Logo.png"
             c.drawImage(logo_path, 240, 750, width=120, height=60)
             c.drawString(100, 750, "Invoice")
             c.drawString(100, 730, f"Date: {invoice_data['Date']}")
@@ -606,10 +620,10 @@ class InvoiceApp:
             generate_button.pack(side="right")
 
         # Add a scrollbar if there are many invoices
-        scrollbar = ttk.Scrollbar(frame, orient="vertical", command=top.yview)
-        scrollbar.pack(side="right", fill="y")
+        # scrollbar = ttk.Scrollbar(frame, orient="vertical", command=top.yview)
+        # scrollbar.pack(side="right", fill="y")
 
-        top.configure(yscrollcommand=scrollbar.set)
+        # top.configure(yscrollcommand=scrollbar.set)
 
 def main():
     root = tk.Tk()
