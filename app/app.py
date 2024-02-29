@@ -177,7 +177,7 @@ class InvoiceApp:
             filename = f"{directory}/Invoice_{invoice_data['Invoice No']}.pdf"
             c = canvas.Canvas(filename, pagesize=letter)
             c = canvas.Canvas(filename, pagesize=letter)
-            logo_path = "logo\Logo.png"
+            logo_path = "Logo.png"
             c.drawImage(logo_path, 240, 750, width=120, height=60)
             c.drawString(100, 750, "Invoice")
             c.drawString(100, 730, f"Date: {invoice_data['Date']}")
